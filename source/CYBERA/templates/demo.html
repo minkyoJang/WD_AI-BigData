@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block contents %}
+    <div class="row empty_row"></div>
+    <div class="row empty_row"></div>
+    <div class="row empty_row"></div>
+    <div class="row empty_row"></div>
+    <div class="row empty_row"></div>
+
+    <div class="row">
+        <div class="offset-3 col-md-6 text-center">
+            <h1 class="font-weight-bold">Cyberaffiti</h1>
+        </div>
+    </div>
+
+    <div class="row empty_row"></div>
+    <div class="row empty_row"></div>
+
+
+    <form method="post" action="demo">
+        <div class="form-row">
+            <div class="col-md-3"></div>
+            <div class="form-group col-md-5">
+                <input class="form-control" type="text" name="query" placeholder="텍스트를 입력하세요" aria-label="Search">
+            </div>
+            <div class="form-group col-md-1">
+                <button class="btn btn-outline-success btn-block" type="submit">검색</button>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="offset-4 col-md-4">
+            {{ predict }} 유해하다
+        </div>
+    </div>
+{% endblock contents %}

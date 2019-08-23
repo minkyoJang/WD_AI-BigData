@@ -1,0 +1,193 @@
+#twitch_chatting
+
+
+import re
+from urllib import error
+from html import unescape
+import requests
+import json 
+from bs4 import BeautifulSoup
+import time
+import sqlite3
+
+
+def download(method,url,param=None,data=None, timeout=1, maxretries=3):
+    headers ={"Accept-Language": "ko-KR",
+              "Client-Id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
+              "Content-Type": "text/plain;charset=UTF-8",
+              "Origin": "https://www.twitch.tv",
+              "Referer": "https://www.twitch.tv/search?term=%ED%92%8D%EC%9B%94%EB%9F%89%2F459527458",
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36",
+              "X-Device-Id": "1896bda3b7a429f1"}
+                #  개발자 도구에서 qql의 request헤더부분 설정함
+    try:
+        resp=requests.request(method, url,params=param,data=data, headers=headers)
+        resp.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        if 500<=e.response.status_code<600 and maxretries>0:
+            print(maxretries)
+            
+            download(method,url,param,data,timeout,maxretries-1)
+        else:
+            print(e.response.status_code)
+            print(e.response.reason)
+    return resp
+
+
+
+con = sqlite3.connect("FinalTwitchDb.db")
+cur = con.cursor()
+
+cur.execute("SELECT name FROM bj ")
+seen_bj=[_[0] for _ in cur.fetchall()]
+
+cur.execute("SELECT * FROM url")
+seen_url=[_[2] for _ in cur.fetchall()]
+
+cur.execute("SELECT name FROM writer")
+seen_writer=[_[0] for _ in cur.fetchall()]
+
+cur.execute("SELECT * FROM url")
+seen_chat=[_[2] for _ in cur.fetchall()]
+
+
+cur.executescript('''
+                     
+    CREATE TABLE url(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    netloc_id INTEGER NOT NULL,  
+    path TEXT NOT NULL,
+    param TEXT,
+    bj_id INTEGER NOT NULL,
+    title TEXT NOT NULL
+    );
+
+   
+    CREATE TABLE netloc(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    netloc TEXT NOT NULL                                   
+    );
+
+    
+    CREATE TABLE chat(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    content TEXT NOT NULL,
+    writer_id INTEGER NOT NULL,
+    w_time TEXT NOT NULL, 
+    url_id INTEGER NOT NULL
+    );
+
+   
+    CREATE TABLE jamak(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    content TEXT NOT NULL,
+    j_time TEXT NOT NULL,
+    url_id INTEGER NOT NULL
+    );
+
+  
+    CREATE TABLE bj(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT NOT NULL,
+    netloc_id INTEGER NOT NULL
+    );
+
+   
+    CREATE TABLE writer(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT NOT NULL
+    );
+    
+    ''')
+
+con.commit()
+cur.executescript("""
+    INSERT INTO netloc(netloc) VALUES("www.afreeca.com");
+    INSERT INTO netloc(netloc) VALUES("www.youtube.com");
+    INSERT INTO netloc(netloc) VALUES("www.twitch.tv.com");
+""")
+con.commit()
+
+# 개발자 도구에서 qql의 request payload설정부분
+def search_twi(name_bj):
+    return {"operationName":"SearchResultsPage_SearchResults","variables":{"query":name_bj,"options":None},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"e5763309c0c0d14e7b59d5da0975794469cab4182e85b8f220820a43ff15905c"}}}
+
+
+def getIdOfVideos(name_bj):
+    #모든 영상 첫부분이 이 형태이고 id_part만 다르기 때문에 이렇게 성정하고 id_part부분만 수정할 것
+    data = search_twi(name_bj)
+    #post를 보내기위해 payload를 불러온다.
+    data = json.dumps(data)
+    #json형식이 object안에 object가 있는 형태라면 dumps를 써야한다. 이유는 모른다.
+    html = download("post","https://gql.twitch.tv/gql",data = data)
+    #qql에 post를 보내는 부분     
+    if "items" in html.json()['data']['searchFor']["videos"]:# 해당 페이지내에 비디오가 있는 지 확인후
+        list_id =[(_['id'],_['title'],_['viewCount'],_['owner']['displayName']) for _ in html.json()['data']['searchFor']["videos"]['items']]# basic_url의 id part부분에 사용할 비디오의 id들을 리스트로 받아온다
+        src=html.json()['data']['searchFor']["videos"]['items']
+        for _ in src:
+            if _['owner']['displayName'] not in seen_bj:
+                seen_bj.append(_['owner']['displayName'])
+                cur.execute("INSERT INTO bj(name,netloc_id) VALUES(?,?)",[_['owner']['displayName'],3])
+                con.commit()
+        return list_id
+    else :
+        return []# 아니면 빈 리스트 반환
+
+
+def twi_chat(url,chat_list=None):
+    source_url = "https://www.twitch.tv/videos/id_part"
+    v_url = source_url.replace(requests.compat.urlparse(source_url)[2].split('/')[2],requests.compat.urlparse(url)[2].split('/')[3])
+    url_path=requests.compat.urlparse(v_url)[2]
+    if chat_list is None:
+        chat_list=[]
+    html = download("get",url)
+    twi_json = html.json()
+    chat_list.extend([(comment['commenter']['name'],comment['message']['fragments'][0]['text'] ,comment['updated_at'])for comment in twi_json["comments"]])
+    cur.execute("SELECT id FROM url WHERE path=?",[url_path])
+    url_id =cur.fetchone()[0]
+    if url_path not in seen_chat: 
+        for _ in twi_json["comments"]:
+            if _['commenter']['name'] not in seen_writer:
+                seen_writer.append(_['commenter']['name'])
+                cur.execute("INSERT INTO writer(name) VALUES(?)",[_['commenter']['name']])
+                con.commit()
+
+        for _ in twi_json["comments"]:
+            comment=_['message']['fragments']
+            cur.execute("SELECT id FROM writer WHERE name=?",[_['commenter']['name']])
+            writer_id =cur.fetchone()[0]
+            cur.execute("INSERT INTO chat(content,writer_id,w_time,url_id) VALUES(?,?,?,?)",[comment[0]['text'],writer_id,_['updated_at'],url_id])
+            con.commit()
+            
+    if "_next" in twi_json:
+        temp = twi_json["_next"]
+        url = url.replace(requests.compat.urlparse(url)[4],'cursor='+temp)
+        twi_chat(url,chat_list)
+    if url_path not in seen_chat:
+        seen_chat.append(url_path)            
+    return chat_list,v_url
+
+def twi_chat_final(*bj_name):
+    basic_url = "https://api.twitch.tv/v5/videos/id_part/comments?content_offset_seconds=0"
+    source_url = "https://www.twitch.tv/videos/id_part"
+    bj_list = [name for name in bj_name]
+    video = list(map(getIdOfVideos,bj_list))
+    video_total=[_ for x in video for _ in x ]
+    #video_total의0번 째는 video의 id 1번째 원소가 방송이름 2번째가 조회수 3번째가 bj이름
+    video_chat= [basic_url.replace(requests.compat.urlparse(basic_url)[2].split('/')[3],total[0])for total in video_total]
+    video_source=[source_url.replace(requests.compat.urlparse(source_url)[2].split('/')[2],total[0])for total in video_total]
+    for _ in range(len(video_source)):
+        url_path=requests.compat.urlparse(video_source[_])[2]
+        if url_path not in seen_url:        
+            seen_url.append(url_path)
+            path,param = requests.compat.urlparse(video_source[_])[2],requests.compat.urlparse(video_source[_])[3]
+            bj_na=video_total[_][3]
+            b_title=video_total[_][1]
+            cur.execute("SELECT id FROM bj WHERE name=?",[bj_na])
+            bj_id = cur.fetchone()[0]
+            cur.execute("INSERT INTO url(netloc_id,path,param,bj_id,title) VALUES(?,?,?,?,?)",[3,path,param,bj_id,b_title])
+            con.commit()        
+    return list(map(twi_chat,video_chat))
+
+
+res = twi_chat_final("팻두","앰비션","이선생","브베","우왁굳","풍월량")
