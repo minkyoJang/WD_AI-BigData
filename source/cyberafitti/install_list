@@ -8,4 +8,5 @@ lxml,
 numpy,
 pandas,
 tensorflow,
-reqeust
+reqeust,
+

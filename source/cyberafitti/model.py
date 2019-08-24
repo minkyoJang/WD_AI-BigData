@@ -14,6 +14,7 @@ class Bj(db.Model):
     name = db.Column(db.String, nullable=False)
     blacklist = db.Column(db.Boolean, nullable=False, default=False)
     seen = db.Column(db.Boolean, nullable=False, default=False)
+    per = db.Column(db.Integer, nullable=False, default=0)
     platform_id = db.Column(db.ForeignKey('Platform.id'), nullable=False)
 
     platform = db.relationship('Platform', primaryjoin='Bj.platform_id == Platform.id', backref='bjs')

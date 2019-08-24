@@ -17,92 +17,22 @@
     <div class="row empty_row"></div>
 
 
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-5">
-            <input class="form-control" type="text" name="query" placeholder="텍스트를 입력하세요" aria-label="Search">
-            <div></div>
+    <form method="post" action="demo">
+        <div class="form-row">
+            <div class="col-md-3"></div>
+            <div class="form-group col-md-5">
+                <input class="form-control" type="text" name="query" placeholder="텍스트를 입력하세요" aria-label="Search">
+            </div>
+            <div class="form-group col-md-1">
+                <button class="btn btn-outline-success btn-block" type="submit">검색</button>
+            </div>
+            <div class="col-md-3"></div>
         </div>
-        <div class="col-md-1">
-            <button class="btn btn-outline-success btn-block" id="search" type="submit">검색</button>
-        </div>
-        <div class="col-md-3"></div>
-    </div>
-
-    <div class="row empty_row"></div>
-
-    <div class="row">
-        <div class="offset-5 col-md-2 text-center" id="loadingArea">
-
-        </div>
-    </div>
+    </form>
 
     <div class="row">
-        <div class="offset-3 col-md-6">
-            <div id="resultArea" class="text-center"></div>
+        <div class="offset-4 col-md-4">
+            {{ predict }} 유해하다
         </div>
     </div>
-
-<script>
-    var query = $("input[name=query]");
-    var result;
-    var spiner = $("<div class='spinner-border' role='status'/>").append($("<span class='sr-only'/>").text('Loading...'));
-
-    $("#search").click(function(){
-        if(result){
-            result.remove();
-        }
-
-        var queryStr = query.val();
-
-        if(queryStr){
-            $(".noquery").remove();
-
-            if(!$("#loadingArea").selectAllChildren){
-                $('#loadingArea').append(spiner);
-            }
-
-            $.ajax({
-                url:'/demo',
-                type:"POST",
-                data:{
-                    query:queryStr,
-                },
-                success:function(response){
-
-                    spiner = spiner.detach();
-
-                    var res = parseFloat(response.trim()) * 100;
-
-                    if (res > 70){
-                        result = $("<div class='alert alert-danger'/>");
-                        result.text(res +"% 유해합니다. 바른말 고운말을 사용해주세요.");
-                    }
-                    else if (res > 40){
-                        result = $("<div class='alert alert-warning'/>");
-                        result.text( res +"% 유해합니다. 바른말 고운말을 사용해주세요.");
-                    }
-                    else{
-                        result = $("<div class='alert alert-success'/>");
-                        result.text( res +"% 유해합니다. 고운말을 사용하는 아름다운분이네요!");
-                    }
-                    $('#resultArea').append(result);
-                },
-
-            })
-
-        }
-        else{
-            if($(".noquery")){
-                $(".noquery").remove();
-            }
-            var alert = $("<div class='alert alert-danger noquery'/>");
-            alert.text("문장을 입력하세요");
-            $("#resultArea").after(alert);
-
-            query.focus();
-            {#$(".alert").alert()#}
-        }
-});
-</script>
 {% endblock contents %}

@@ -13,8 +13,8 @@ def run_model(uploaded_txt):
     warnings.filterwarnings(action='ignore')
     print(uploaded_txt)
     morp = Okt()
-    print(morped = morp.morphs(uploaded_txt, norm=True, stem=True))
-    # print(morped)
+    morped = [morp.morphs(_, norm=True, stem=True) for _ in uploaded_txt]
+    print(morped)
 
     
     # load vocab
@@ -37,7 +37,7 @@ def run_model(uploaded_txt):
 
     pad_id = 0
 
-    x_variable = [text_to_index(morped)]
+    x_variable = [text_to_index(_) for _ in morped]
     
     sentence_size = 20
     x_padded = sequence.pad_sequences(x_variable,
@@ -50,6 +50,6 @@ def run_model(uploaded_txt):
     new_model = keras.models.load_model('./model/cnn_oversample.h5')
 
     # predict
-    predict_prob = new_model.predict(x_padded)
-    print(predict_prob)
-    return predict_prob[0][1]
+    predict_class = new_model.predict_classes(x_padded)
+    print(predict_class)
+    return sum(predict_class) / len(x_padded)

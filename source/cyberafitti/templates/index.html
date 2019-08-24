@@ -1,25 +1,97 @@
-{% extends 'base.html' %}
+<!doctype html>
+<html lang="ko">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel='stylesheet' href="/static/bootstrap/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/128a736b7f.js"></script>
 
-{% block contents %}
 
-    <div class="row">
-        <div class="offset-md-1 col-md-10">
-            <div class="jumbotron">
-                <h1>Welcome to Cyberaffiti</h1>
+    <title>Cyberaffiti</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+
+</head>
+
+
+<body style="overflow: scroll;">
+    <div class="board">
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: transparent;">
+            <a class="navbar-brand" href="{{ url_for('index') }}"><i class="fas fa-city"></i>Cyberaffiti</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('information') }}">소개</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('download') }}">다운로드</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            시뮬레이션
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ url_for('demo') }}">Demo</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url_for('youtube') }}">유튜브</a>
+                            <a class="dropdown-item" href="{{ url_for('twitch') }}">트위치</a>
+                            <a class="dropdown-item" href="{{ url_for('afreeca') }}">아프리카</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container-fluid board-content">
+            <div class="empty-row"></div>
+            <div class="empty-row"></div>
+
+            <div class="row">
+                <div class="offset-md-3 col-sm-6 border">
+                    <div class="empty-row"></div>
+                    <div class="row text-center">
+                        <div class="offset-md-2 col-md-8">
+                            <p class="title">CYBERAFFITI</p>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="offset-md-2 col-md-8">
+                            <h4 class="text-center">유해도 기반의 필터링 시스템</h4>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="offset-md-2 col-md-8">
+                            <h4 class="text-center">You could protect the child from harmful videos</h4>
+                        </div>
+                    </div>
+                    <div class="empty-row"></div>
+                    <div class="empty-row"></div>
+                    <div class="empty-row"></div>
+                    <div class="empty-row"></div>
+
+                </div>
+            </div>
+
+
+            <div class="row d-flex align-items-end flex-column mb-3">
+                <p class="footer">
+                    Made by <span style="color:red;">Korea Univ #3</span><i class="fa fa-heart heart" style="color:red;"></i>. Free download <a href="{{ url_for('download')}}">here.</a>
+                </p>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="offset-md-1 col-md-10">
-            <a href="#" class="btn btn-link">Quick download</a>
-        </div>
-    </div>
-    <div class="row">
 
-    </div>
-    <div class="row">
-
-    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/static/js/jquery-3.4.1.min.js"></script>
+    <script src="/static/bootstrap/bootstrap.min.js"></script>
+</body>
 
 
-{% endblock contents %}
+</html>

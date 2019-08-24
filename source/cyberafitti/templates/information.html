@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block contents %}
+<div class="empty-row"></div>
+    <!--        소개-->
+    <div class="row">
+        <div class="offset-md-2 col-md-8">
+            <p class="semi-title">Cyberaffiti는?</p>
+        </div>
+    </div>
+    <!--        소개 내용-->
+    <div class="row">
+        <div class="offset-md-2 col-md-8">
+            <span>
+                Cyberaffiti는 아동, 청소년들에게 영향을 미치는
+                유해한 컨텐츠를 포함한 인터넷 방송을 필터링해주는 시스템 입니다.
+            </span>
+        </div>
+    </div>
+
+    <div class="empty-row"></div>
+
+    <!--        유해한 내용중 차지하는 비중  그래프 -->
+    <div class="row">
+        <div class="offset-md-2 col-md-8">
+            <canvas id="harm"></canvas>
+        </div>
+    </div>
+    <div class="empty-row"></div>
+    <div class="row">
+        <div class="offset-md-2 col-md-8">
+            <p>인터넷 방송에 존재하는 유해한 컨텐츠 중 욕설, 부적절한 언어를 사용하는 컨텐츠가 유해 컨텐츠 중 <span class='accent'>51%</span>를 차지하고 있습니다.</p>
+            <p>기존의 욕설 필터링 시스템은 완전한 형태의 욕이 아닌 경우를 잡아내지 못하여 우리 아이들이 변형된 욕설에 그대로 노출되었습니다.</p>
+            <p>그렇기 때문에 우리 <span class="accent">cyberaffiti</span>는 <span class="accent">딥러닝 기법</span>을 이용하여 비속어가 많이 등장하는 영상들을 필터링 해줍니다.</p>
+        </div>
+    </div>
+
+    <br>
+    <!--        성능 -> 실제 채팅을 가지고 attention 시각화 한것 보여주기 -->
+
+
+    <div class="row">
+        <div class="offset-md-2 col-md-8">
+            <p class="semi-title">Cyberaffiti의 성능</p>
+            <canvas id="performance"></canvas>
+            <br>
+            <p>기존의 비속어 사전 기법을 이용한 경우 <span class='accent'>17%</span>밖에 욕설을 탐지해내지 못한 반면 딥러닝 기법을 사용한 경우 <span class='accent'>90%</span> 욕설을 탐지해 냅니다.</p>
+            <p>변형된 욕설까지 모두 잡아내어 비속어가 많이 포함된 영상이 아이들에게 노출되지 않도록 차단합니다.</p>
+            <span>
+                다음은 실제로 인터넷 방송에 등장하는 채팅들에서 Cyberaffiti가 욕설을 탐지해낸 부분입니다.
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class='offset-md-2 col-md-8'>
+            <div>특정 예시 가지고 어탠션 시각화를 넣을 예정이다.</div>
+        </div>
+    </div>
+
+    <script>
+        var ctx = document.getElementById('harm').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'pie',
+
+            // The data for our dataset
+            data: {
+    //                labels: ['문제 언어 사용', '폭력적', '선정적', '기타'],
+                labels: ['기타', '선정적', '폭력적', '문제 언어 사용'],
+                datasets: [{
+                    label: '인터넷 방송 유해 컨탠츠 비율',
+                    backgroundColor: ['#f292a0', '#e94961', '#c81933', '#6d0d1c'],
+                    data: [ 14, 15, 20, 51],
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+                title:{
+                   display:true ,
+                    position: 'bottom',
+                    fontSize: 18,
+                    text:"인터넷 방송 유해 컨탠츠 비율(%)"
+                },
+            }
+        });
+
+        var ctx2 = document.getElementById('performance').getContext('2d');
+        var chart = new Chart(ctx2, {
+            // The type of chart we want to create
+            type: 'bar',
+            data: {
+                labels: ['비속어 사전', '딥러닝 기반(Cyberaffiti)'],
+                datasets: [{
+                    label: '욕설을 탐지해내는 비율(%)',
+                    data: [17, 90],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes:[{
+                        barPercentage:0.5
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }],
+                },
+                title:{
+                    display:true ,
+                    position: 'bottom',
+                    fontSize: 18,
+                    text:"탐지율 비교"
+                }
+            },
+        });
+    </script>
+{% endblock contents %}
+

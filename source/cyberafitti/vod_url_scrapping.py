@@ -5,7 +5,7 @@ import requests
 from collections import defaultdict
 import json
 import re
-from scrapChat import afre_chat, twi_chat
+from scrapChat import afre_chat, twi_chat, youtube_jamak
 import pandas as pd
 from download import download
 from bs4 import BeautifulSoup
@@ -16,7 +16,7 @@ def afreeca_get_video_urls(bj_id):
     아프리카 비제이의 영상 url들을 파싱해오는 함수 입니다.
 
     :param bj_id: bj의 아이디 입니다.(닉네임x)
-    :return: 아프리카 비제이의 영상 url (/123453형식)을 반환합니다.
+    :return: 아프리카 비제이의 영상 url (123453형식)을 반환합니다.
     """
     url='http://bjapi.afreecatv.com/api/'+bj_id+'/vods'
     video_list = []
@@ -26,7 +26,8 @@ def afreeca_get_video_urls(bj_id):
         result = download('get', url, param=param).json()['data']
         if not result:
             break
-        video_list.extend(["/"+str(_['title_no']) for _ in result])
+        video_list.extend([str(_['title_no']) for _ in result])
+        # video_list.extend(["/"+str(_['title_no']) for _ in result])
         i += 1
     return video_list
 
@@ -45,7 +46,7 @@ def get_video_urls(bj_id, platform):
     elif platform == 'twitch':
         return twitch_get_video_urls(bj_id)
     else:
-        return
+        return youtube_get_video_urls(bj_id)
 
 
 def parse_url(bjList):
@@ -71,27 +72,29 @@ def parse_url(bjList):
 
 
 def twitch_get_video_urls(bj_id):
-    '''
-    트위치 bj의 영상 url을 불러옵니다.
-    :param bj_id:
-    :return: list, 파싱한 url들이 담긴 list를 반환한다.
-    '''
-    urls = []
-    offset = 0
+    """
+    트위치 비제이의 영상 목록을 파싱해오는 함수
+    :param bj_id: str, bj의 아이디를 입력
+    :return: list, url들이 들어있는 list
+    """
+    data = {"operationName": "FilterableVideoTower_Videos",
+            "variables": {"limit": 30, "channelOwnerLogin": bj_id, "broadcastType": None, "videoSort": "TIME"},
+            "extensions": {"persistedQuery": {"version": 1,
+                                              "sha256Hash": "2023a089fca2860c46dcdeb37b2ab2b60899b52cca1bfa4e720b260216ec2dc6"}}}
+    lst = []
     while True:
-        url = "https://api.twitch.tv/kraken/channels/" + bj_id + "/videos"
-        params = {
-            'broadcast_type': 'archive',
-            'limit': 100,
-            'offset': offset
-        }
-        html = download('get', url, param=params).json()
-        if not 'videos' in html.keys() or len(html['videos']) == 0:
+        data1 = json.dumps(data)
+        html = download("post", "https://gql.twitch.tv/gql", data=data1)
+        dom = html.json()
+        dom['data']['user']['videos']['edges'][len(dom['data']['user']['videos']['edges']) - 1]
+        lst.extend(['/' + _['node']['id'] for _ in dom['data']['user']['videos']['edges']])
+        if dom['data']['user']['videos']['pageInfo']['hasNextPage'] == True:
+            data['variables']['cursor'] = \
+            dom['data']['user']['videos']['edges'][len(dom['data']['user']['videos']['edges']) - 1]['cursor']
+        else:
             break
 
-        urls.extend([_['url'] for _ in html['videos']])
-        offset = re.search(r'offset=(\d*)', html['_links']['next']).group(1)
-    return [re.search(r'videos(/\d+)', url).group(1) for url in urls]
+    return lst
 
 
 # json, requests, BeautifulSoup, re
@@ -171,6 +174,23 @@ def twitch_make_datasets(bj_id, urls, n=3):
 
     return result.reset_index()
 
+
+def youtube_make_datasets(bj_id, urls, n=3):
+    '''
+    파싱해온 urls를 넣으면 영상 3개에서 chatingdata를 뽑아온다.
+    :param bj_id: str
+    :param urls: list, url = '/123345'
+    :param n: 채팅 데이터를 스크래핑할 영상 개수 default = 3
+    :return: DataFrame, columns = [0, 1, 2] : (comment, writer, time)
+    '''
+    result = pd.DataFrame()
+    for _ in urls[:n]:
+        chatdata = pd.DataFrame(youtube_jamak(_))
+        result = pd.concat([result, chatdata])
+
+    return result.reset_index()
+
+
 def make_dataset(bj_id, urls, platform, n=3):
     '''
     플랫폼을 같이 받아서 데이터 셋을 만들어주는 함수
@@ -186,5 +206,4 @@ def make_dataset(bj_id, urls, platform, n=3):
     elif platform =='twitch':
         return twitch_make_datasets(bj_id, urls, n)
     else :
-        print('여기는 유튜브임')
-        return
+        return youtube_make_datasets(bj_id, urls, n)

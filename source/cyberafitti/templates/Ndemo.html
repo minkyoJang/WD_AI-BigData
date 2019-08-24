@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="{{url_for('static',filename='new.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/loading.css') }}">
+  {% extends 'base.html' %}
+  {% block contents %}
+
+    <div class="container h-100">
+        <div class="d-flex justify-content-center h-100">
+            <div class="searchbar">
+              <input class="search_input" type="text" name="query" placeholder="텍스트를 입력해보세요">
+              <a id="search" class="search_icon"><i class="fas fa-search"></i></a>
+            </div>
+        </div>
+    </div>
+
+<script>
+var query = $('input[name=query]');
+$('#search').click(function(){
+    var loading = $('<div class="cover-wrap"/>').append($('<div class="display-wrap"/>').append($("<img src='/static/images/loading.gif'/>")));
+    var container = $(".container");
+    container.after(loading);
+    var queryStr = query.val();
+    $.ajax({
+       url:'/demo',
+        type:'POST',
+        data:{
+           query:queryStr,
+        },
+        success:function(response){
+           loading = loading.detach();
+           console.log(response)
+        },
+    });
+});
+</script>
+  {%  endblock contents %}
+
+
