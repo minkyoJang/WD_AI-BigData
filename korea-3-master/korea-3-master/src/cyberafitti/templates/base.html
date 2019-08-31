@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <title>Cyberaffiti</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap/bootstrap.css')}}" >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <!-- Bootstrap CSS -->
+    <script src="{{url_for('static', filename='js/jquery-3.4.1.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/Chart.bundle.min.js') }}"></script>
+
+  </head>
+  <body>
+    {% include 'nav.html' %}
+    <div class="container-fluid">
+
+        {% block contents %}
+        {% endblock contents %}
+
+    </div>
+    <div class="empty-row"></div>
+    <div class="empty-row"></div>
+    <div class="empty-row"></div>
+    <div class="empty-row"></div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{{ url_for('static', filename='bootstrap/bootstrap.min.js') }}"></script>
+  </body>
+
+</html>
+

@@ -1,0 +1,73 @@
+
+    <html lang="en">
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <style>
+    body {
+    font-family: Sans-Serif;
+    }
+    </style>
+    </head>
+    <body>
+    
+    </body>
+    <script>
+    var any_text = ["_걸__ 어__텐__션__ 시__각__화__ 해__보__시__오__ 좆__1밥__아__ㅋㅋ"];
+var trigram_weights = [8.01369995e-12,4.15318937e-06,9.62125712e-10,6.36125430e-13
+,2.71709405e-10,5.02182063e-13,1.72407021e-12,6.76952894e-08
+,2.80209558e-12,2.60156965e-11,1.66984499e-11,2.44195235e-07
+,1.27481670e-08,7.08568260e-10,1.36936278e-11,1.46877926e-10
+,1.04391139e-13,5.81294457e-11,2.43853791e-11,1.19924567e-12
+,7.52371082e-12,2.78064904e-09,5.07830400e-09,4.33097551e-11
+,5.24937624e-14,4.71102254e-11,5.37294222e-13,7.10797698e-10
+,6.54184595e-10,2.87888713e-09,1.77847866e-07,1.37821032e-09
+,1.13222513e-11,1.60609617e-13,8.31379676e-09,2.78539869e-06
+,4.54144392e-05,1.00495659e-01,4.73453045e-01,2.61113575e-10
+,7.12384790e-05,3.98527026e-01,2.74001434e-02,1.44854893e-08
+,2.28304553e-09,1.16392129e-09,8.76992489e-12,2.65940117e-11
+,1.37460366e-12,1.27184695e-11];
+
+    var color = "255,0,0";
+    var ngram_length = 3;
+    var half_ngram = 1;
+    
+
+    var tokens = any_text[0];
+    var intensity = new Array(tokens.length);
+    var max_intensity = Number.MIN_SAFE_INTEGER;
+    var min_intensity = Number.MAX_SAFE_INTEGER;
+
+    for (var i = 0; i < intensity.length; i++) {
+        intensity[i] = 0.0;
+
+        for (var j = -half_ngram; j < ngram_length-half_ngram; j++) {
+            if (i+j < intensity.length && i+j > -1) {
+                intensity[i] += trigram_weights[i + j];
+            }
+        }
+        if (i == 0 || i == intensity.length-1) {
+            intensity[i] /= 2.0;
+        } else {
+            intensity[i] /= 3.0;
+        }
+        if (intensity[i] > max_intensity) {
+            max_intensity = intensity[i];
+        }
+        if (intensity[i] < min_intensity) {
+            min_intensity = intensity[i];
+        }
+    }
+    var denominator = max_intensity - min_intensity;
+    for (var i = 0; i < intensity.length; i++) {
+        intensity[i] = (intensity[i] - min_intensity) / denominator;
+    }
+    var heat_text = "";
+    var space = "";
+    for (var i = 0; i < tokens.length; i++) {
+        heat_text += "<span style='background-color:rgba(" + color + "," + intensity[i] + ")'>" + space + tokens[i] + "</span>";
+    }
+    
+    document.body.innerHTML += heat_text;
+    
+    </script>
+    </html>

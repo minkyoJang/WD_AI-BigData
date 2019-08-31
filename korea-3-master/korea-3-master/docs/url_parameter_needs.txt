@@ -1,0 +1,18 @@
+아프리카, 트위치, 유튜브 
+
+-> 모델 돌려서 유해하다고 판단된 bj가 게시한 모든 영상의 
+   해당 parameter를 긁어오는 코드 작성 필요
+
+아프리카 -> bj parameter 예시 : /gk3394
+ 	    영상 parameter 예시 : /43552923
+
+트위치 -> bj parameter 예시 : /lol_ambition
+	  영상 parameter 예시 : '/398296893'
+	  
+유튜브 -> bj parameter 예시 : /user/zilioner83
+	  영상 parameter 예시 : /watch?v=tE1D80-7HgM
+
+--> 우려되는 점 : 아프리카와 트위치의 bj, 영상 parameter가 아주 낮은 확률로 겹칠 수 있음.
+
+
+--> 해당 parameter들을 확장프로그램의 blockURL_list.js에 추가하는 코드도 작성 필요

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <title>Cyberaffiti</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap/bootstrap.css')}}" >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <!-- Bootstrap CSS -->
+    <script src="{{url_for('static', filename='js/jquery-3.4.1.min.js')}}"></script>
+    <script src="https://kit.fontawesome.com/128a736b7f.js"></script>
+    <script src='{{ url_for('static', filename='js/particles.min.js' )}}'></script>
+    <script>
+        var query = "{{ result }}";
+        if(query){
+            $(window).ready(function(){
+                $('#myModal').modal('show');
+            });
+        }
+    </script>
+
+    <style>
+        #particles-js {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(to bottom, rgba(117, 114, 113, 0.8) 10%, rgba(40, 49, 77, 0.8) 30%, rgba(29, 35, 71, 0.8) 50%, rgba(19, 25, 28, 0.8) 80%, rgba(15, 14, 14, .8) 100%), url(https://38.media.tumblr.com/tumblr_m00c3czJkM1qbukryo1_500.gif);
+          background-repeat: no-repeat;
+          background-size: cover;
+          background-position: 50% 50%;
+        }
+    </style>
+
+  </head>
+  <body>
+    {% include 'nav.html' %}
+    <div id='particles-js'></div>
+    <div class="container-fluid">
+        <div class="empty-row"></div>
+        <div class="empty-row"></div>
+        <div class="empty-row"></div>
+        <div class="empty-row"></div>
+        <div class="empty-row"></div>
+        <div class="empty-row"></div>
+        <br>
+
+
+
+        <form action="{{url_for('demo')}}" method='post'>
+            <div class="form-group form-row searchbox">
+                <div class='col-md-3'></div>
+                <div class='col-md-6'>
+                    <input id="query" class="form-control search_input" name="query" type="text" placeholder="당신은 얼마나 아름다운 언어를 사용하시나요?">
+                </div>
+                <div class='col-md-1'>
+                    <button type="submit" id="search" class="form-control btn-sm btn btn-primary btn-block"><i class="fas fa-search"></i></button>
+                </div>
+                <div class='col-md-2'></div>
+            </div>
+        </form>
+
+        <div class="modal" id="myModal" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">당신이 입력한 문장의 유해정도</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" id="attention">
+                <br><br>
+                <p class="text-right"><span class="accent warning">{{ result }}%</span> 유해합니다.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <script>
+        {{ script|safe }}
+    </script>
+    <script>
+        particlesJS("particles-js", {
+          "particles": {
+            "number": {
+              "value": 400,
+              "density": {
+                "enable": true,
+                "value_area": 800
+              }
+            },
+            "color": {
+              "value": "#eb4034"
+            },
+            "shape": {
+              "type": "image",
+              "stroke": {
+                "width": 3,
+                "color": "#fff"
+              },
+              "polygon": {
+                "nb_sides": 5
+              },
+              "image": {
+                "src": "http://www.dynamicdigital.us/wp-content/uploads/2013/02/starburst_white_300_drop_2.png",
+                "width": 100,
+                "height": 100
+              }
+            },
+            "opacity": {
+              "value": 0.7,
+              "random": false,
+              "anim": {
+                "enable": false,
+                "speed": 1,
+                "opacity_min": 0.1,
+                "sync": false
+              }
+            },
+            "size": {
+              "value": 5,
+              "random": true,
+              "anim": {
+                "enable": false,
+                "speed": 20,
+                "size_min": 0.1,
+                "sync": false
+              }
+            },
+            "line_linked": {
+              "enable": false,
+              "distance": 50,
+              "color": "#ffffff",
+              "opacity": 0.6,
+              "width": 1
+            },
+            "move": {
+              "enable": true,
+              "speed": 5,
+              "direction": "bottom",
+              "random": true,
+              "straight": false,
+              "out_mode": "out",
+              "bounce": false,
+              "attract": {
+                "enable": true,
+                "rotateX": 300,
+                "rotateY": 1200
+              }
+            }
+          },
+          "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+              "onhover": {
+                "enable": true,
+                "mode":  "bubble"
+              },
+              "onclick": {
+                "enable": true,
+                "mode": "repulse"
+              },
+              "resize": true
+            },
+            "modes": {
+              "grab": {
+                "distance": 150,
+                "line_linked": {
+                  "opacity": 1
+                }
+              },
+              "bubble": {
+                "distance": 200,
+                "size": 40,
+                "duration": 2,
+                "opacity": 8,
+                "speed": 3
+              },
+              "repulse": {
+                "distance": 200,
+                "duration": 0.2
+              },
+              "push": {
+                "particles_nb": 4
+              },
+              "remove": {
+                "particles_nb": 2
+              }
+            }
+          },
+        "retina_detect": true
+    });
+    </script>
+    <script>
+    var query = $('input[name=query]');
+    var alert = $('<br><div class="alert alert-danger"/>');
+    $('form').submit(function(e){
+        e.preventDefault();
+
+        var queryTag = $('#query');
+        var query = queryTag.val();
+        if(!query){
+            queryTag.after(alert.text('문장을 입력하세요'));
+        }
+        else{
+            this.submit();
+        }
+
+    });
+    </script>
+    <script src="{{ url_for('static', filename='bootstrap/bootstrap.min.js') }}"></script>
+
+  </body>
+
+</html>
+

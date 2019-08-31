@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img class="logo" src="{{ url_for('static', filename='images/logo.png') }}">
+        Cyberaffiti</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {% if request.path =='/introduce' %}
+              <li class="nav-item active">
+                <a class="nav-link" href="{{ url_for('introduce') }}"> 소개 <span class="sr-only">(current)</span></a>
+              </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('introduce') }}"> 소개 <span class="sr-only">(current)</span></a>
+                </li>
+            {% endif %}
+            {% if request.path =='/download' %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('download') }}"> 다운로드 <span class="sr-only">(current)</span></a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('download') }}"> 다운로드 <span class="sr-only">(current)</span></a>
+                </li>
+            {% endif %}
+            {% if request.path =='/demo' %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('demo') }}"> Demo <span class="sr-only">(current)</span></a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('demo') }}"> Demo <span class="sr-only">(current)</span></a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block contents %}
+    <div class="empty-row"></div>
+    <div class="row">
+        <div class="offset-md-2 col-md-8">
+            <p class="semi-title">Download</p>
+        </div>
+    </div>
+
+    <div class="empty-row"></div>
+
+    <div class="row text-center">
+        <div class="offset-md-2 col-md-8">
+            <img class="download-img" src="{{ url_for('static', filename='images/logo.png') }}">
+        </div>
+    </div>
+    <div class='row text-center'>
+        <div class="offset-md-2 col-md-8">
+            <a class="btn btn-link btn-lg" href="https://chrome.google.com/webstore/detail/cyberaffiti/iglebngmpbfnkjcccpkdleefmdpekkoe">Download Here</a>
+        </div>
+    </div>
+    <div class="empty-row"></div>
+    <div class="empty-row"></div>
+    <div class="empty-row"></div>
+    <div class="row">
+        <div class="offset-md-2 col-md-8">
+            <p class="semi-title">
+                다운로드 방법
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset-md-2 col-md-8">
+            <br><br><p class="accent">1. 링크로 들어가서 다운로드를 클릭합니다.</p>
+            <img class="download-info" src="{{ url_for('static', filename='images/download1.png') }}"><br>
+            <br><br><p class="accent">2. '확장 프로그램 추가' 버튼을 클릭하면 설치가 완료 됩니다.</p>
+            <img class="download-info" src="{{ url_for('static', filename='images/download2.png') }}"><br>
+            <br><br><p class="accent">3. 오른쪽 상단의 설정에서 '도구 더보기'>'확장 프로그램'에서 관리하실 수 있습니다.</p>
+            <img class="download-info" src="{{ url_for('static', filename='images/download3.png') }}"><br>
+            <br><br><p class="accent">4. 시크릿 모드에서도 사용하고 싶다면 다음과 같이 설정을 합니다.</p>
+            <img class="download-info" src="{{ url_for('static', filename='images/download4.png') }}"><br>
+            <img class="download-info" src="{{ url_for('static', filename='images/download5.png') }}">
+        </div>
+    </div>
+{% endblock contents %}

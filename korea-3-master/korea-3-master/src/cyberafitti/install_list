@@ -1,0 +1,12 @@
+가상환경 구축시에 설치해야 하는 것들(빠진것이 있다면 추가해주세요)
+bs4,
+flask,
+flaks-sqlalchemy,
+jpipe1,
+konlpy,
+lxml,
+numpy,
+pandas,
+tensorflow,
+reqeust,
+torch
